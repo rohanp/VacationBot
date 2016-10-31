@@ -44,7 +44,7 @@ login({email: process.env.EMAIL, password: process.env.PASSWORD},
 
 		            if (event.body.indexOf("Rohbot:") == -1 && newPerson(event.threadID)){
 		            	api.sendMessage("Rohbot: Helo facebook user " + event.threadID +
-		            					", I am Rohbot. AMA"
+		            					", I am Rohbot. AMA, I'm hooked up to cleverbot."
 		            					, event.threadID)
 
 		            	var bot = new cleverbot("m9BGjZRC1yiv6R83", "ziHCP17gG5iZk7gDbLtHU91TfszJBJ5G");

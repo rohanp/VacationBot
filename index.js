@@ -6,6 +6,7 @@ env(__dirname + '/.env')
 var botmap = new Map()
 var peopleTalkedTo = new Set()
 
+// dont wanna spam group chats
 function isGroupChat(threadID){
 	return true ? (threadID.match(/0/g)||[]).length < 4 : false
 }
@@ -19,18 +20,22 @@ function newPerson(threadID){
 	}
 }
 
+
 login({email: process.env.EMAIL, password: process.env.PASSWORD},
 
+	// login
 	function callback (err, api) {
 	    if(err) return console.error(err);
 
 	    api.setOptions({selfListen: false})
 
+	    // listen for events
 	    var stopListening = api.listen(
 			function(err, event) {
 		        if(err) return console.error(err);
 		        console.log(event.threadID)
 
+		        // only responds to messages
 		        if (!isGroupChat(event.threadID) && event.type === "message") {
 
 		            if(event.body === '/stop') {
@@ -42,6 +47,8 @@ login({email: process.env.EMAIL, password: process.env.PASSWORD},
 		              if(err) console.log(err);
 		            });
 
+
+		            // introduce rohbot to new people
 		            if (event.body.indexOf("Rohbot:") == -1 && newPerson(event.threadID)){
 		            	api.sendMessage("Rohbot: Helo facebook user " + event.threadID +
 		            					", I am Rohbot. AMA, I'm hooked up to cleverbot."
@@ -51,9 +58,8 @@ login({email: process.env.EMAIL, password: process.env.PASSWORD},
 		            	bot.setNick(event.threadID)
 		            	botmap.set(event.threadID, bot)
 
-
-		            } else if (event.body.indexOf("Rohbot:") == -1) { // make sure not replying to self
-		            	//continue previous convo
+		            // continue convo with old people
+		            } else {
 
 		            	var bot = botmap.get(event.threadID)
 
